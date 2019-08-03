@@ -1,0 +1,31 @@
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root --password password \
+--query "select 
+	CREDIT_CARD_NO,
+	date_format((CAST(CONCAT(CAST(YEAR AS CHAR(4)),LPAD(CAST(MONTH AS CHAR(2)), 2, '0'),LPAD(CAST(DAY AS CHAR(2)), 2, '0')) AS DATE)), '%Y%m%d') ,
+	CUST_SSN,
+	BRANCH_CODE,
+	TRANSACTION_TYPE,
+	TRANSACTION_VALUE
+from CDW_SAPP_CREDITCARD WHERE \$CONDITIONS" \
+--split-by CREDIT_CARD_NO \
+--m 1 \
+--target-dir ExtractionModule/CDW_SAPP_F_CREDIT_CARD
+
+
+
+
+
+
+
+MYSQL QUERY:
+select 
+	CREDIT_CARD_NO,
+	date_format((CAST(CONCAT(CAST(YEAR AS CHAR(4)),LPAD(CAST(MONTH AS CHAR(2)), 2, '0'),LPAD(CAST(DAY AS CHAR(2)), 2, '0')) AS DATE)), '%Y%m%d') ,
+	CUST_SSN,
+	BRANCH_CODE,
+	TRANSACTION_TYPE,
+	TRANSACTION_VALUE
+from CDW_SAPP_CREDITCARD;

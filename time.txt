@@ -1,0 +1,37 @@
+sqoop import \
+--connect jdbc:mysql://localhost/CDW_SAPP \
+--driver com.mysql.jdbc.Driver \
+--username root --password password \
+--query "select 
+	date_format((CAST(CONCAT(CAST(YEAR AS CHAR(4)),LPAD(CAST(MONTH AS CHAR(2)), 2, '0'),LPAD(CAST(DAY AS CHAR(2)), 2, '0')) AS DATE)), '%Y%m%d')AS TIMEID ,
+	LPAD(CAST(DAY AS CHAR(2)), 2, '0') AS DAY,
+    LPAD(CAST(MONTH AS CHAR(2)), 2, '0') AS MONTH,
+    CASE WHEN (MONTH >= 1 AND MONTH <= 3) THEN 'Quarter 1'
+		 WHEN (MONTH > 3 AND MONTH <7) THEN 'Quarter 2'
+         WHEN (MONTH > 6 AND MONTH < 10) THEN 'Quarter 3'
+         WHEN (MONTH > 9 AND MONTH < 13) THEN 'Quarter 4'
+		 END AS Quarter,
+    CAST(YEAR AS CHAR(4))
+from CDW_SAPP_CREDITCARD WHERE \$CONDITIONS" \
+--split-by TIMEID \
+--m 1 \
+--target-dir ExtractionModule/CDW_SAPP_D_TIME
+
+
+
+
+
+
+
+
+select 
+	date_format((CAST(CONCAT(CAST(YEAR AS CHAR(4)),LPAD(CAST(MONTH AS CHAR(2)), 2, '0'),LPAD(CAST(DAY AS CHAR(2)), 2, '0')) AS DATE)), '%Y%m%d')AS TIMEID ,
+	LPAD(CAST(DAY AS CHAR(2)), 2, '0') AS DAY,
+    LPAD(CAST(MONTH AS CHAR(2)), 2, '0') AS MONTH,
+    CASE WHEN MONTH >= 1 AND MONTH <= 3 THEN 'Quarter 1'
+		 WHEN MONTH > 3 AND MONTH <7 THEN 'Quarter 2'
+         WHEN MONTH > 6 AND MONTH < 10 THEN 'Quarter 3'
+         WHEN MONTH > 9 AND MONTH < 13 THEN 'Quarter 4'
+		 END AS Quarter,
+    CAST(YEAR AS CHAR(4))
+from CDW_SAPP_CREDITCARD;
